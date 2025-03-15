@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+</head>
+<body>
+    <h1>Data from Prices Table</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nobitex Currencies</th>
+                <th>Wallex Currencies</th>
+                <th>Common Currencies</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+            <tr>
+                <td>{{ row.0 }}</td>  <!-- nobitex_currencies -->
+                <td>{{ row.1 }}</td>  <!-- wallex_currencies -->
+                <td>{{ row.2 }}</td>  <!-- common_currencies -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
