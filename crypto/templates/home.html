@@ -15,10 +15,25 @@
         </thead>
         <tbody>
             {% for row in data %}
+
             <tr>
-                <td>{{ row.0 }}</td>  <!-- nobitex_currencies -->
-                <td>{{ row.1 }}</td>  <!-- wallex_currencies -->
-                <td>{{ row.2 }}</td>  <!-- common_currencies -->
+                <td>
+                    <a href="{{ nobitex_url }}{{row.0|lower}}" target="_blank">
+                        {{ row.0 }}
+                    </a>
+                </td>  <!-- nobitex_currencies -->
+
+                <td>
+                    <a href="{{ wallex_url }}{{row.1|lower}}" target="_blank">
+                        {{ row.1 }}
+                    </a>
+                </td>  <!-- wallex_currencies -->
+
+                <td>
+                    <a href="{{ base_url }}{{row.2|lower}}" target="_blank">
+                        {{ row.2 }}
+                    </a>
+                </td> <!-- common_currencies -->
             </tr>
             {% endfor %}
         </tbody>
