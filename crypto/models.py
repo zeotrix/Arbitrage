@@ -8,3 +8,8 @@ class Prices(models.Model):
     class Meta:
         db_table = 'prices'
         managed = False  # Tell Django not to manage the table schema
+    
+    def __str__(self):
+        return f"{self.nobitex_currencies} {self.wallex_currencies} {self.common_currencies}"
+    
+    
