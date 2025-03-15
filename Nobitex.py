@@ -1,6 +1,7 @@
 import aiohttp
 import asyncio
 
+
 # Nobitex API key
 nobitex_api_key = "your_api_key"
 nobitex_api_secret = "your_api_secret"

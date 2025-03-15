@@ -1,29 +1,45 @@
+import aiohttp
+import asyncio
 
-import requests
 # Wallex API key
 wallex_api_key = "your_api_key"
 wallex_api_secret = "your_api_secret"
 
-def get_wallex_currency_list():
-    url = f"https://api.wallex.ir/v1/markets"
-    response = requests.get(url)
-    data = response.json()
-    return data
+async def get_wallex_currency_list(session):
+    url = "https://api.wallex.ir/v1/markets"
+    async with session.get(url) as response:
+        data = await response.json()
+        return data
 
-
-currency_list = list(get_wallex_currency_list()["result"]["symbols"].keys())
-
-#print(currency_list)
-
-def get_wallex_price(symbol):
+async def get_wallex_price(session, symbol):
     url = f"https://api.wallex.ir/v1/depth?symbol={symbol}"
-    response = requests.get(url)
-    data = response.json()
-    return data
+    async with session.get(url) as response:
+        data = await response.json()
+        return data
 
+async def fetch_all_prices():
+    async with aiohttp.ClientSession() as session:
+        # Fetch the list of currencies
+        currency_data = await get_wallex_currency_list(session)
+        currency_list = list(currency_data["result"]["symbols"].keys())
 
-for currency in currency_list:
-    currency_value = get_wallex_price(currency)["result"]
-    print(f"currency is {currency} and ask is {currency_value["ask"][0]} and bid is {currency_value["ask"][0]}")
+        # Fetch prices for each currency concurrently
+        tasks = []
+        for currency in currency_list:
+            task = asyncio.create_task(get_wallex_price(session, currency))
+            tasks.append(task)
 
-        
+        # Wait for all tasks to complete
+        results = await asyncio.gather(*tasks)
+
+        # Print the results
+        for currency, result in zip(currency_list, results):
+            if "result" in result and "ask" in result["result"] and "bid" in result["result"]:
+                ask_price = result["result"]["ask"][0] if len(result["result"]["ask"]) > 0 else "N/A"
+                bid_price = result["result"]["bid"][0] if len(result["result"]["bid"]) > 0 else "N/A"
+                print(f"Currency is {currency}, ask is {ask_price}, and bid is {bid_price}")
+            else:
+                print(f"{currency} : No data available")
+
+# Run the async function
+asyncio.run(fetch_all_prices())
