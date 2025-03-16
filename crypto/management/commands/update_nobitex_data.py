@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
     @sync_to_async
     def update_currency_price(self, currency, trade_price):
-        Prices.objects.filter(currencies=currency).update(
+        Prices.objects.filter(currencies=currency).order_by('currency_id').update(
             nobitex_last_trade_price=trade_price
         )
 

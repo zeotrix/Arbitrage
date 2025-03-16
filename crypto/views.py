@@ -6,7 +6,7 @@ from django.contrib import messages
 
 def home(request):
     with connection.cursor() as cursor:
-        cursor.execute("SELECT currency_id , currencies, binance_last_trade_price , nobitex_last_trade_price , wallex_last_trade_price FROM prices")
+        cursor.execute("SELECT currency_id , currencies, binance_last_trade_price , nobitex_last_trade_price , wallex_last_trade_price FROM prices ORDER BY currency_id")
         data = cursor.fetchall()
     binance_url = "https://www.binance.com/en/trade/"
     nobitex_url = "https://nobitex.ir/panel/exchange/"
