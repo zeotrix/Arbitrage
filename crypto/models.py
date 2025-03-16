@@ -1,15 +1,17 @@
 from django.db import models
 
 class Prices(models.Model):
-    nobitex_currencies = models.CharField(max_length=255)
-    wallex_currencies = models.CharField(max_length=255)
-    common_currencies = models.CharField(max_length=255)
+    currency_id = models.IntegerField()   
+    currencies = models.CharField(max_length=255)    
+    binance_last_trade_price = models.FloatField()
+    nobitex_last_trade_price = models.FloatField()
+    wallex_last_trade_price = models.FloatField()
 
     class Meta:
         db_table = 'prices'
         managed = False  # Tell Django not to manage the table schema
     
     def __str__(self):
-        return f"{self.nobitex_currencies} {self.wallex_currencies} {self.common_currencies}"
+        return f"{self.currency_id} {self.currencies} {self.binance_last_ask_price} {self.nobitex_last_bid_price} {self.wallex_last_ask_price}"
     
     

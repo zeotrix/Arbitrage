@@ -35,5 +35,14 @@ async def fetch_all_prices():
             else:
                 print(f"{currency} : No data available")
 
+
+async def new():
+    async with aiohttp.ClientSession() as session:
+        # Fetch the list of currencies
+        initial_data = await get_nobitex_price(session, 'BTCIRT')
+        print(initial_data["lastTradePrice"])
+        currency_list = list(initial_data.keys())
+        currency_list.remove('status')
+
 # Run the async function
-asyncio.run(fetch_all_prices())
+asyncio.run(new())

@@ -5,12 +5,27 @@
 </head>
 <body>
     <h1>Data from Prices Table</h1>
+    <form action="{% url 'update_nobitex_data' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Update Nobitex Data</button>
+    </form>
+    <!-- Display messages -->
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+           <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <table border="1">
         <thead>
             <tr>
-                <th>Nobitex Currencies</th>
-                <th>Wallex Currencies</th>
-                <th>Common Currencies</th>
+                <th>ID</th>
+                <th>Currencies</th>
+                <th>Binance Last Ask Price</th>
+                <th>Nobitex Last Bid Price</th>
+                <th>Wallex Last Ask Price</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -18,22 +33,31 @@
 
             <tr>
                 <td>
-                    <a href="{{ nobitex_url }}{{row.0|lower}}" target="_blank">
                         {{ row.0 }}
-                    </a>
-                </td>  <!-- nobitex_currencies -->
+                </td>  <!-- id of currencies-->
 
                 <td>
-                    <a href="{{ wallex_url }}{{row.1|lower}}" target="_blank">
+                    
                         {{ row.1 }}
                     </a>
-                </td>  <!-- wallex_currencies -->
+                </td>  <!-- currencies -->
 
                 <td>
-                    <a href="{{ base_url }}{{row.2|lower}}" target="_blank">
+                    <a href="{{ binance_url }}{{row.2|lower}}" target="_blank">
                         {{ row.2 }}
                     </a>
-                </td> <!-- common_currencies -->
+                </td>  <!-- binan last trade price -->
+
+                <td>
+                    <a href="{{ nobitex_url }}{{row.3|lower}}" target="_blank">
+                        {{ row.3 }}
+                    </a>
+                </td> <!-- nobitex last trade price -->
+                <td>
+                    <a href="{{ wallex_url }}{{row.4|lower}}" target="_blank">
+                        {{ row.4 }}
+                    </a>
+                </td> <!-- wallex last trade price-->
             </tr>
             {% endfor %}
         </tbody>
