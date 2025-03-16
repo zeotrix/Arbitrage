@@ -4,6 +4,6 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('update-nobitex-data/', views.update_nobitex_data, name='update_nobitex_data'),
+    path('update-brokers-data/', views.update_brokers_data, name='update_brokers_data'),
 
 ]

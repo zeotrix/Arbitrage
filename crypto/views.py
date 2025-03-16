@@ -13,13 +13,15 @@ def home(request):
     wallex_url = "https://wallex.ir/app/trade/"
     return render(request, 'home.html', {'data': data, 'binance_url': binance_url, 'nobitex_url': nobitex_url, 'wallex_url': wallex_url})
 
-def update_nobitex_data(request):
+def update_brokers_data(request):
     if request.method == 'POST':
         try:
+            call_command('update_binance_data')
             call_command('update_nobitex_data')
-            messages.success(request, 'Nobitex data updated successfully!')
+            messages.success(request, 'brokers data updated successfully!')
         except Exception as e:
-            messages.error(request, f'Error updating Nobitex data: {str(e)}')
+            messages.error(request, f'Error updating brokers data: {str(e)}')
         return redirect('home')
     else:
         return redirect('home')
+

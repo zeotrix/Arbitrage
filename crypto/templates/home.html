@@ -5,9 +5,9 @@
 </head>
 <body>
     <h1>Data from Prices Table</h1>
-    <form action="{% url 'update_nobitex_data' %}" method="post">
+    <form action="{% url 'update_brokers_data' %}" method="post">
         {% csrf_token %}
-        <button type="submit">Update Nobitex Data</button>
+        <button type="submit">Update Brokers Data</button>
     </form>
     <!-- Display messages -->
     {% if messages %}
