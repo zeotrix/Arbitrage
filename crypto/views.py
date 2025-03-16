@@ -16,6 +16,7 @@ def home(request):
 def update_brokers_data(request):
     if request.method == 'POST':
         try:
+            call_command('update_wallex_data')
             call_command('update_binance_data')
             call_command('update_nobitex_data')
             messages.success(request, 'brokers data updated successfully!')
