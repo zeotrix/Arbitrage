@@ -2,6 +2,11 @@
 <html>
 <head>
     <title>Home Page</title>
+    <style>
+        .highlight {
+            background-color: yellow; /* Highlight color */
+        }
+    </style>
 </head>
 <body>
     <h1>Data from Prices Table</h1>
@@ -58,6 +63,10 @@
                         {{ row.4 }}
                     </a>
                 </td> <!-- wallex last trade price-->
+
+                <td {% if row.6 %}class="highlight"{% endif %}>
+                    {{ row.5 }}
+                </td><!-- difference -->
             </tr>
             {% endfor %}
         </tbody>
