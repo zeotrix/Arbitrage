@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'crypto_prices',
         'USER': 'postgres',
-        'PASSWORD': '145294',
+        'PASSWORD': '****',
         'HOST': 'localhost',  # or your database host
         'PORT': '5432',       # default PostgreSQL port
     }
