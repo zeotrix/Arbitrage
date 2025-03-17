@@ -1,0 +1,8 @@
+# ignore ALL .log files
+*.log
+db.sqlite3
+
+# ignore ALL files in ANY directory named temp
+temp/
+__pycache__/
+migrations/
