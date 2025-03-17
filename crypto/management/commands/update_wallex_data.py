@@ -14,9 +14,24 @@ class Command(BaseCommand):
 
     async def get_wallex_price(self, session, symbol):
         url = f"https://api.wallex.ir/v1/trades?symbol={symbol}"
-        async with session.get(url) as response:
-            data = await response.json()
-            return data
+        timeout = aiohttp.ClientTimeout(total=1)  # Set a 10-second timeout
+        try:
+            async with session.get(url, timeout=timeout) as response:
+                if response.status == 429:
+                    await asyncio.sleep(1)  # Handle rate limiting
+                    return await self.get_wallex_price(session, symbol)
+                content_type = response.headers.get('Content-Type', '')
+                if 'application/json' not in content_type:
+                    self.stdout.write(self.style.WARNING(f"Unexpected content type for {symbol}: {content_type}"))
+                    return {"success": False}
+                data = await response.json()
+                return data
+        except asyncio.TimeoutError:
+            self.stdout.write(self.style.ERROR(f"Request timed out for {symbol}"))
+            return {"success": False}
+        except aiohttp.ClientError as e:
+            self.stdout.write(self.style.ERROR(f"Connection error for {symbol}: {e}"))
+            return {"success": False}
 
     @sync_to_async
     def update_currency_price(self, currency, trade_price):
@@ -47,7 +62,6 @@ class Command(BaseCommand):
             for currency in currency_list:
                
                 if len(results) > 0 and results[currency]["success"] == True:
-                    print("ok")
                     trade_price = results[currency]["result"]["latestTrades"][0]["price"]  # Last trade price
                     await self.update_currency_price(currency, trade_price)
                     self.stdout.write(self.style.SUCCESS(f"Updated {currency}: Trade Price={trade_price}"))

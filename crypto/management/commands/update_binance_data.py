@@ -11,12 +11,29 @@ class Command(BaseCommand):
     def get_currencies_from_db(self):
         # Get all unique currencies from the database
         return list(Prices.objects.values_list('currencies', flat=True).distinct())
-
+    
+    #https://developers.binance.com/docs/binance-spot-api-docs/rest-api#market-data-endpoints
+    
     async def get_binance_price(self, session, symbol):
         url = f"https://api.binance.us/api/v3/ticker/price?symbol={symbol}"
-        async with session.get(url) as response:
-            data = await response.json()
-            return data
+        timeout = aiohttp.ClientTimeout(total=1)  # Set a 10-second timeout
+        try:
+            async with session.get(url, timeout=timeout) as response:
+                if response.status == 429:
+                    await asyncio.sleep(1)  # Handle rate limiting
+                    return await self.get_wallex_price(session, symbol)
+                content_type = response.headers.get('Content-Type', '')
+                if 'application/json' not in content_type:
+                    self.stdout.write(self.style.WARNING(f"Unexpected content type for {symbol}: {content_type}"))
+                    return {"success": False}
+                data = await response.json()
+                return data
+        except asyncio.TimeoutError:
+            self.stdout.write(self.style.ERROR(f"Request timed out for {symbol}"))
+            return {"success": False}
+        except aiohttp.ClientError as e:
+            self.stdout.write(self.style.ERROR(f"Connection error for {symbol}: {e}"))
+            return {"success": False}
 
     @sync_to_async
     def update_currency_price(self, currency, trade_price):

@@ -9,11 +9,13 @@ def home(request):
         cursor.execute("SELECT currency_id , currencies, binance_last_trade_price , nobitex_last_trade_price , wallex_last_trade_price FROM prices ORDER BY currency_id")
         data = cursor.fetchall()
     binance_url = "https://www.binance.com/en/trade/"
-    nobitex_url = "https://nobitex.ir/panel/exchange/"
+    
     wallex_url = "https://wallex.ir/app/trade/"
     
+
     #Calculate difference between brokers
     processed_data = []
+    
     for row in data:
         row = list(row)
         nobitex_price = row[3] if row[3] is not None else 0
@@ -31,22 +33,34 @@ def home(request):
             row.append(True)  # Append True if the condition is met
         else:
             row.append(False)  # Append False otherwise
-            
+
+        if "USDT" in row[1]:
+                nobitex_url = f"https://nobitex.ir/panel/exchange/{row[1].replace('USDT', '-USDT')}"
+        else:
+                nobitex_url = "https://nobitex.ir/panel/exchange/"     
+        row.append(nobitex_url)
+        
         processed_data.append(row)
 
-
-
-    return render(request, 'home.html', {'data': processed_data, 'binance_url': binance_url, 'nobitex_url': nobitex_url, 'wallex_url': wallex_url})
+    return render(request, 'home.html', {'data': processed_data, 'binance_url': binance_url,  'wallex_url': wallex_url})
 
 def update_brokers_data(request):
     if request.method == 'POST':
         try:
-            call_command('update_wallex_data')
             call_command('update_binance_data')
-            call_command('update_nobitex_data')
-            messages.success(request, 'brokers data updated successfully!')
+            messages.success(request, 'binance data updated successfully!')
         except Exception as e:
-            messages.error(request, f'Error updating brokers data: {str(e)}')
+            messages.error(request, f'Error updating binance data: {str(e)}')
+        try:
+            call_command('update_nobitex_data')
+            messages.success(request, 'nobitex data updated successfully!')
+        except Exception as e:
+            messages.error(request, f'Error updating nobitex data: {str(e)}')
+        try:
+            call_command('update_wallex_data')
+            messages.success(request, 'wallex data updated successfully!')
+        except Exception as e:
+            messages.error(request, f'Error updating wallex data: {str(e)}')
         return redirect('home')
     else:
         return redirect('home')
