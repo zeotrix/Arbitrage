@@ -5,7 +5,7 @@ from psycopg2 import sql
 db_params = {
     "dbname": "crypto_prices",
     "user": "postgres",  # Replace with your PostgreSQL username
-    "password": "145294",  # Replace with your PostgreSQL password
+    "password": "***",  # Replace with your PostgreSQL password
     "host": "localhost",
     "port": 5432
 }
