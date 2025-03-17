@@ -1,75 +1,176 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Home Page</title>
+    <title>Iran Arbitrage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
         .highlight {
-            background-color: yellow; /* Highlight color */
+            background-color: yellow;
+        }
+        .messages {
+            list-style: none;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .messages li {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+        .messages .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .messages .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Button-20 CSS */
+        .button-20 {
+            appearance: button;
+            background-color: #4D4AE8;
+            background-image: linear-gradient(180deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, 0));
+            border: 1px solid #4D4AE8;
+            border-radius: 1rem;
+            box-shadow: rgba(255, 255, 255, 0.15) 0 1px 0 inset, rgba(46, 54, 80, 0.075) 0 1px 1px;
+            box-sizing: border-box;
+            color: #FFFFFF;
+            cursor: pointer;
+            display: inline-block;
+            font-family: Inter, sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.5;
+            margin: 0;
+            padding: .5rem 1rem;
+            text-align: center;
+            text-transform: none;
+            transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            vertical-align: middle;
+        }
+
+        .button-20:focus:not(:focus-visible),
+        .button-20:focus {
+            outline: 0;
+        }
+
+        .button-20:hover {
+            background-color: #3733E5;
+            border-color: #3733E5;
+        }
+
+        .button-20:focus {
+            background-color: #413FC5;
+            border-color: #3E3BBA;
+            box-shadow: rgba(255, 255, 255, 0.15) 0 1px 0 inset, rgba(46, 54, 80, 0.075) 0 1px 1px, rgba(104, 101, 235, 0.5) 0 0 0 .2rem;
+        }
+
+        .button-20:active {
+            background-color: #3E3BBA;
+            background-image: none;
+            border-color: #3A38AE;
+            box-shadow: rgba(46, 54, 80, 0.125) 0 3px 5px inset;
+        }
+
+        .button-20:active:focus {
+            box-shadow: rgba(46, 54, 80, 0.125) 0 3px 5px inset, rgba(104, 101, 235, 0.5) 0 0 0 .2rem;
+        }
+
+        .button-20:disabled {
+            background-image: none;
+            box-shadow: none;
+            opacity: .65;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <h1>Data from Prices Table</h1>
-    <form action="{% url 'update_brokers_data' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Update Brokers Data</button>
-    </form>
-    <!-- Display messages -->
-    {% if messages %}
-    <ul>
-        {% for message in messages %}
-           <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Currencies</th>
-                <th>Binance Last Ask Price</th>
-                <th>Nobitex Last Bid Price</th>
-                <th>Wallex Last Ask Price</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in data %}
-
-            <tr>
-                <td>
-                        {{ row.0 }}
-                </td>  <!-- id of currencies-->
-
-                <td>
-                    
-                        {{ row.1 }}
-                    </a>
-                </td>  <!-- currencies -->
-
-                <td>
-                    <a href="{{ binance_url }}{{row.1|lower}}" target="_blank">
-                        {{ row.2 }}
-                    </a>
-                </td>  <!-- binan last trade price -->
-
-                <td>
-                    <a href="{{row.7 }}" target="_blank">
-                        {{ row.3 }}
-                    </a>
-                </td> <!-- nobitex last trade price -->
-                <td>
-                    <a href="{{ wallex_url }}{{row.1}}" target="_blank">
-                        {{ row.4 }}
-                    </a>
-                </td> <!-- wallex last trade price-->
-
-                <td {% if row.6 %}class="highlight"{% endif %}>
-                    {{ row.5 }}
-                </td><!-- difference -->
-            </tr>
+    <header>
+        <h1>Arbitrage for 60 Currencies in Nobitex and Wallex Broker</h1>
+        
+        <p>in the table below you can see the difference between the prices of the currencies in the Nobitex and Wallex brokers.</p>
+        <p>if the difference is more than 3 percent, the Difference column becomes yellow. and you can buy from the broker with the lowest price.</p>
+    </header>
+    <main>
+        <form action="{% url 'update_brokers_data' %}" method="post">
+            {% csrf_token %}
+            <button class="button-20" role="button" type="submit">Update Brokers Data</button>
+        </form>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
             {% endfor %}
-        </tbody>
-    </table>
+        </ul>
+        {% endif %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Currencies</th>
+                    <th>Binance Last Ask Price</th>
+                    <th>Nobitex Last Bid Price</th>
+                    <th>Wallex Last Ask Price</th>
+                    <th>Difference</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row.0 }}</td>  <!-- id of currencies -->
+                    <td>{{ row.1 }}</td>  <!-- currencies -->
+                    <td>
+                        <a href="{{ binance_url }}{{row.1|lower}}" target="_blank">
+                            {{ row.2 }}
+                        </a>
+                    </td>  <!-- binance last trade price -->
+                    <td>
+                        <a href="{{row.7 }}" target="_blank">
+                            {{ row.3 }}
+                        </a>
+                    </td> <!-- nobitex last trade price -->
+                    <td>
+                        <a href="{{ wallex_url }}{{row.1}}" target="_blank">
+                            {{ row.4 }}
+                        </a>
+                    </td> <!-- wallex last trade price -->
+                    <td {% if row.6 %}class="highlight"{% endif %}>
+                        {{ row.5 }}
+                    </td><!-- difference -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+    <footer style="margin-top: 20px; text-align: center; padding: 10px; background-color: #f4f4f4;">
+        <p>&copy; 2025 Mostafa Yasaei. All rights reserved.</p>
+    </footer>
+    <script>
+        document.querySelector('form').addEventListener('submit', function() {
+            document.querySelector('.button-20').innerHTML = 'Updating...';
+        });
+    </script>
 </body>
 </html>
